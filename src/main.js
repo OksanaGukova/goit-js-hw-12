@@ -3,12 +3,12 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import { createMarkup } from './js/render-functions';
-import fetchPhotos from './js/pixabai-api';
+import fetchImages from './js/pixabai-api';
 
 
-const imgContainer = document.querySelector('.gallery');
-const searchForm = document.querySelector('.search-form');
-const loaderEl = document.querySelector('.loader');
+const imageGalleryContainer = document.querySelector('.gallery');
+const searchInputForm = document.querySelector('.search-form');
+const loaderElement = document.querySelector('.loader');
 const fetchPhotosButton = document.querySelector('.photo-btn');
 
 let currentPage = 1;
@@ -17,7 +17,7 @@ const limitPerPage = 15;
 async function onSearch(event) {
   event.preventDefault();
   const searchQuery = event.target.elements.searchKeyword.value.trim();
-  imgContainer.innerHTML = '';
+  imageGalleryContainer.innerHTML = '';
 
   try {
     if (searchQuery === '') {
@@ -27,8 +27,8 @@ async function onSearch(event) {
       });
     }
 
-    loaderEl.classList.remove('is-hidden');
-    const imagesData = await fetchPhotos(
+    loaderElement.classList.remove('is-hidden');
+    const imagesData = await fetchImages(
       searchQuery,
       currentPage,
       limitPerPage
@@ -80,19 +80,19 @@ async function onSearch(event) {
       } catch (error) {
         console.log(error);
       } finally {
-        loaderEl.classList.add('is-hidden');
+        loaderElement.classList.add('is-hidden');
       }
     });
   } catch (error) {
     console.log(error);
   } finally {
     event.target.reset();
-    loaderEl.classList.add('is-hidden');
+    loaderElement.classList.add('is-hidden');
   }
 }
 
 function renderImages(images) {
-  imgContainer.innerHTML = createMarkup(images);
+  imageGalleryContainer.innerHTML = createMarkup(images);
 }
 
-searchForm.addEventListener('submit', onSearch);
+searchInputForm.addEventListener('submit', onSearch);
