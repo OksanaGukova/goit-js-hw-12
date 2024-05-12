@@ -3,7 +3,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import { createMarkup } from './js/render-functions';
-import fetchImages from './js/pixabai-api';
+import fetchPhotos from './js/pixabai-api';
 
 
 const imgContainer = document.querySelector('.gallery');
@@ -14,78 +14,69 @@ const fetchPhotosButton = document.querySelector('.photo-btn');
 let page = 1;
 const limit = 15;
 
-async function onSearch(event) {
+function onSearch(event) {
   event.preventDefault();
   const searchQuery = event.target.elements.searchKeyword.value.trim();
   imgContainer.innerHTML = '';
-
-  try {
-    if (searchQuery === '') {
-      return iziToast.error({
-        message:
-          'Sorry, there are no images matching your search query. Please try again!',
-      });
-    }
-
-    loaderEl.classList.remove('is-hidden');
-    const imagesData = await fetchImages(searchQuery, page, limit);
-
-    if (imagesData.hits.length === 0) {
-      fetchPhotosButton.style.display = 'none';
-      iziToast.error({
-        message:
-          'Sorry, there are no images matching your search query. Please try again!',
-      });
-    }
-
-    renderImages(imagesData.hits);
-    page += 1;
-    if (page > 1) {
-      fetchPhotosButton.textContent = 'get more photos';
-  
-      
-    }
-    const lightbox = new SimpleLightbox('.gallery a', {
-      captionsData: 'alt',
-      captionsDelay: 250,
+  if (searchQuery === '') {
+    return iziToast.error({
+      message:
+        'Sorry, there are no images matching your search query. Please try again!',
     });
-    lightbox.refresh();
-    fetchPhotosButton.style.display = 'flex';
-    const totalPages = Math.ceil(100 / limit);
-
-    fetchPhotosButton.addEventListener('click', async () => {
-      try {
-        if (page > totalPages) {
-          return iziToast.error({
-            position: 'topRight',
-            message: "We're sorry, there are no more photos to load",
-          });
-        }
-
-        const photos = await fetchImages(
-          searchQuery,
-          page + 1,
-          limit
-        );
-        renderImages(photos);
-
-        
-      } catch (error) {
-        console.log(error);
-      } finally {
-        loaderEl.classList.add('is-hidden');
-      }
-    });
-  } catch (error) {
-    console.log(error);
-  } finally {
-    event.target.reset();
-    loaderEl.classList.add('is-hidden');
   }
-}
+  imgContainer.innerHTML = '';
+  loaderEl.classList.remove('is-hidden');
 
-function renderImages(images) {
-  imgContainer.innerHTML = createMarkup(images);
+  fetchPhotos(searchQuery)
+    .then(imagesData => {
+      if (imagesData.hits.length === 0) {
+        iziToast.error({
+          message:
+            'Sorry, there are no images matching your search query. Please try again!',
+        });
+      }
+
+      imgContainer.innerHTML = createMarkup(imagesData.hits);
+      const lightbox = new SimpleLightbox('.gallery a', {
+        captionsData: 'alt',
+        captionsDelay: 250,
+      });
+        lightbox.refresh(); 
+    })
+    .catch(error => console.log(error))
+    .finally(() => {
+      event.target.reset();
+      loaderEl.classList.add('is-hidden');
+    });
 }
 
 searchForm.addEventListener('submit', onSearch);
+
+
+function onLoadMore() {
+  loaderEl.classList.remove('is-hidden');
+  page++; // Increment the page number
+  const searchQuery = searchForm.elements.searchKeyword.value.trim();
+
+  fetchPhotos(searchQuery, page) // Pass the page number to fetchPhotos
+    .then(imagesData => {
+      if (imagesData.hits.length === 0) {
+        iziToast.error({
+          message: 'Sorry, there are no more images to load.',
+        });
+      } else {
+        imgContainer.innerHTML += createMarkup(imagesData.hits); // Append new images
+        const lightbox = new SimpleLightbox('.gallery a', {
+          captionsData: 'alt',
+          captionsDelay: 250,
+        });
+        lightbox.refresh();
+      }
+    })
+    .catch(error => console.log(error))
+    .finally(() => {
+      loaderEl.classList.add('is-hidden');
+    });
+}
+
+fetchPhotosButton.addEventListener('click', onLoadMore);
