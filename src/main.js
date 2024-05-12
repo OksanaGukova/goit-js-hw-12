@@ -39,6 +39,12 @@ async function onSearch(event) {
     }
 
     renderImages(imagesData.hits);
+    page += 1;
+    if (page > 1) {
+      fetchPhotosButton.textContent = 'get more photos';
+  
+      
+    }
     const lightbox = new SimpleLightbox('.gallery a', {
       captionsData: 'alt',
       captionsDelay: 250,
@@ -63,12 +69,7 @@ async function onSearch(event) {
         );
         renderImages(photos);
 
-        page += 1;
-        if (page > 1) {
-          fetchPhotosButton.textContent = 'get more photos';
-          const imagesData = await fetchImages(searchQuery, page, limit);
-          renderImages(imagesData.hits);
-        }
+        
       } catch (error) {
         console.log(error);
       } finally {
