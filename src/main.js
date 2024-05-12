@@ -11,8 +11,8 @@ const searchInputForm = document.querySelector('.search-form');
 const loaderElement = document.querySelector('.loader');
 const fetchPhotosButton = document.querySelector('.photo-btn');
 
-let currentPage = 1;
-const limitPerPage = 15;
+let page = 1;
+const limit = 15;
 
 async function onSearch(event) {
   event.preventDefault();
@@ -28,11 +28,7 @@ async function onSearch(event) {
     }
 
     loaderElement.classList.remove('is-hidden');
-    const imagesData = await fetchImages(
-      searchQuery,
-      currentPage,
-      limitPerPage
-    );
+    const imagesData = await fetchImages(searchQuery, page, limit);
 
     if (imagesData.hits.length === 0) {
       fetchPhotosButton.style.display = 'none';
@@ -49,11 +45,11 @@ async function onSearch(event) {
     });
     lightbox.refresh();
     fetchPhotosButton.style.display = 'flex';
-    const totalPages = Math.ceil(100 / limitPerPage);
+    const totalPages = Math.ceil(100 / limit);
 
     fetchPhotosButton.addEventListener('click', async () => {
       try {
-        if (currentPage > totalPages) {
+        if (page > totalPages) {
           return iziToast.error({
             position: 'topRight',
             message: "We're sorry, there are no more photos to load",
@@ -62,19 +58,15 @@ async function onSearch(event) {
 
         const photos = await fetchImages(
           searchQuery,
-          currentPage + 1,
-          limitPerPage
+          page + 1,
+          limit
         );
         renderImages(photos);
 
-        currentPage += 1;
-        if (currentPage > 1) {
-          fetchPhotosButton.textContent = 'No more photos';
-          const imagesData = await fetchImages(
-            searchQuery,
-            currentPage,
-            limitPerPage
-          );
+        page += 1;
+        if (page > 1) {
+          fetchPhotosButton.textContent = 'get more photos';
+          const imagesData = await fetchImages(searchQuery, page, limit);
           renderImages(imagesData.hits);
         }
       } catch (error) {
