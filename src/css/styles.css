@@ -167,6 +167,7 @@ width: 91px;
 height: 40px;
 background: #4e75ff;
 border: none;
+color: #fff;
 }
 
 ul {
@@ -200,3 +201,21 @@ ul {
     width: 360px;
 }
 
+.is-hidden-btn {
+    display: none;
+}
+ 
+/* .load-btn {
+    border-radius: 8px;
+    padding: 8px 16px;
+    width: 150px;
+    height: 40px;
+    background: #4e75ff;
+    border: none;
+    display: flex;
+    align-items: center;
+    right: 0;
+        margin: auto;
+    margin-top: 32px;
+    color: #fff;
+}  */
