@@ -13,7 +13,7 @@ const fetchPhotosButton = document.querySelector('.photo-btn');
 
 let page = 1;
 const limit = 15;
-let currentSearchQuery = ''; // Зберігаємо поточний пошуковий запит
+let currentSearchQuery = ''; 
 
 function showLoadMoreButton() {
   fetchPhotosButton.classList.remove('is-hidden-btn');
@@ -59,13 +59,13 @@ async function onSearch(event) {
         'Sorry, there are no images matching your search query. Please try again!',
     });
   }
-  currentSearchQuery = searchQuery; // Оновлюємо поточний пошуковий запит
+  currentSearchQuery = searchQuery; 
   loaderEl.classList.remove('is-hidden');
 
   try {
-    page = 1; // Скидаємо номер сторінки при новому пошуку
+    page = 1; 
     await fetchAndDisplayPhotos(searchQuery, page);
-    showLoadMoreButton(); // Показуємо кнопку "Завантажити більше" лише після завантаження першої сторінки фотографій
+    showLoadMoreButton(); 
   } catch (error) {
     console.log(error);
   } finally {
