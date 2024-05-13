@@ -201,11 +201,8 @@ ul {
     width: 360px;
 }
 
-.is-hidden-btn {
-    display: none;
-}
- 
-/* .load-btn {
+
+ .photo-btn {
     border-radius: 8px;
     padding: 8px 16px;
     width: 150px;
@@ -218,4 +215,8 @@ ul {
         margin: auto;
     margin-top: 32px;
     color: #fff;
-}  */
+}  
+
+.is-hidden-btn {
+    display: none;
+}
