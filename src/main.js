@@ -13,18 +13,16 @@ const fetchPhotosButton = document.querySelector('.photo-btn');
 
 let page = 1;
 const limit = 15;
+let currentSearchQuery = ''; // Зберігаємо поточний пошуковий запит
 
 function showLoadMoreButton() {
   fetchPhotosButton.classList.remove('is-hidden-btn');
 }
 
-async function onLoadMore() {
+async function fetchAndDisplayPhotos(searchQuery, pageNumber) {
   loaderEl.classList.remove('is-hidden');
-  page++;
-  const searchQuery = searchForm.elements.searchKeyword.value.trim();
-
   try {
-    const imagesData = await fetchPhotos(searchQuery, page);
+    const imagesData = await fetchPhotos(searchQuery, pageNumber);
     if (imagesData.hits.length === 0) {
       iziToast.error({
         message: 'Sorry, there are no more images to load.',
@@ -44,6 +42,11 @@ async function onLoadMore() {
   }
 }
 
+async function onLoadMore() {
+  page++;
+  await fetchAndDisplayPhotos(currentSearchQuery, page);
+}
+
 fetchPhotosButton.addEventListener('click', onLoadMore);
 
 async function onSearch(event) {
@@ -56,25 +59,13 @@ async function onSearch(event) {
         'Sorry, there are no images matching your search query. Please try again!',
     });
   }
-  imgContainer.innerHTML = '';
+  currentSearchQuery = searchQuery; // Оновлюємо поточний пошуковий запит
   loaderEl.classList.remove('is-hidden');
 
   try {
-    const imagesData = await fetchPhotos(searchQuery);
-    if (imagesData.hits.length === 0) {
-      iziToast.error({
-        message:
-          'Sorry, there are no images matching your search query. Please try again!',
-      });
-    } else {
-      imgContainer.innerHTML = createMarkup(imagesData.hits);
-      showLoadMoreButton();
-      const lightbox = new SimpleLightbox('.gallery a', {
-        captionsData: 'alt',
-        captionsDelay: 250,
-      });
-      lightbox.refresh();
-    }
+    page = 1; // Скидаємо номер сторінки при новому пошуку
+    await fetchAndDisplayPhotos(searchQuery, page);
+    showLoadMoreButton(); // Показуємо кнопку "Завантажити більше" лише після завантаження першої сторінки фотографій
   } catch (error) {
     console.log(error);
   } finally {
