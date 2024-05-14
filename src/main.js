@@ -70,10 +70,12 @@ async function onSearch(event) {
   const searchQuery = event.target.elements.searchKeyword.value.trim();
   imgContainer.innerHTML = '';
   if (searchQuery === '') {
+    hideLoadMoreButton();
     return iziToast.error({
       message:
         'Sorry, there are no images matching your search query. Please try again!',
     });
+
   }
   currentSearchQuery = searchQuery; 
   loaderEl.classList.remove('is-hidden');

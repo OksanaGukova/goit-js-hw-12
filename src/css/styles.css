@@ -159,6 +159,11 @@
  border-radius: 4px;
 width: 272px;
 height: 40px;
+text-align: center;
+}
+
+.search-input::placeholder {
+  color:#0d0d0d;
 }
 
 .search-btn {
@@ -171,6 +176,10 @@ border: none;
 color: #fff;
 }
 
+button:hover {
+  background: #6c8cff;
+}
+
 ul {
   list-style-type: none;
 }
@@ -181,6 +190,15 @@ ul {
   justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.zoom-on-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
+}
+
+.zoom-on-hover:hover {
+  transform: scale(1.15);
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
 }
 
 .photo-container {
@@ -206,13 +224,11 @@ ul {
  .photo-btn {
     border-radius: 8px;
     padding: 8px 16px;
-    width: 150px;
     height: 40px;
     background: #4e75ff;
     border: none;
     display: flex;
     align-items: center;
-    right: 0;
         margin: auto;
     margin-top: 32px;
     color: #fff;
