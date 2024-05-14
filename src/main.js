@@ -12,11 +12,15 @@ const loaderEl = document.querySelector('.loader');
 const fetchPhotosButton = document.querySelector('.photo-btn');
 
 let page = 1;
-const limit = 15;
 let currentSearchQuery = ''; 
+
 
 function showLoadMoreButton() {
   fetchPhotosButton.classList.remove('is-hidden-btn');
+}
+
+function hideLoadMoreButton() {
+  fetchPhotosButton.classList.add('is-hidden-btn');
 }
 
 async function fetchAndDisplayPhotos(searchQuery, pageNumber) {
@@ -25,8 +29,10 @@ async function fetchAndDisplayPhotos(searchQuery, pageNumber) {
     const imagesData = await fetchPhotos(searchQuery, pageNumber);
     if (imagesData.hits.length === 0) {
       iziToast.error({
-        message: 'Sorry, there are no more images to load.',
+        message:
+          'Sorry, there are no images matching your search query. Please try again!',
       });
+      hideLoadMoreButton(); 
     } else {
       imgContainer.innerHTML += createMarkup(imagesData.hits);
       const lightbox = new SimpleLightbox('.gallery a', {
@@ -34,6 +40,16 @@ async function fetchAndDisplayPhotos(searchQuery, pageNumber) {
         captionsDelay: 250,
       });
       lightbox.refresh();
+      scrollPage();
+      const totalLoadedImages = pageNumber * imagesData.hits.length;
+      if (totalLoadedImages >= imagesData.totalHits) {
+        hideLoadMoreButton();
+        iziToast.info({
+          message: "We're sorry, but you've reached the end of search results.",
+        });
+      } else {
+        showLoadMoreButton();
+      }
     }
   } catch (error) {
     console.log(error);
@@ -65,7 +81,6 @@ async function onSearch(event) {
   try {
     page = 1; 
     await fetchAndDisplayPhotos(searchQuery, page);
-    showLoadMoreButton(); 
   } catch (error) {
     console.log(error);
   } finally {
@@ -75,3 +90,15 @@ async function onSearch(event) {
 }
 
 searchForm.addEventListener('submit', onSearch);
+
+
+function scrollPage() {
+  const { height: cardHeight } = document
+    .querySelector('.photo-container')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}
