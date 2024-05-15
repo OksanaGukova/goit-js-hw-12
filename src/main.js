@@ -35,12 +35,13 @@ async function fetchAndDisplayPhotos(searchQuery, pageNumber) {
       hideLoadMoreButton(); 
     } else {
       imgContainer.innerHTML += createMarkup(imagesData.hits);
+   
       const lightbox = new SimpleLightbox('.gallery a', {
         captionsData: 'alt',
         captionsDelay: 250,
       });
       lightbox.refresh();
-      scrollPage();
+ 
       const totalLoadedImages = pageNumber * imagesData.hits.length;
       if (totalLoadedImages >= imagesData.totalHits) {
         hideLoadMoreButton();
@@ -61,6 +62,7 @@ async function fetchAndDisplayPhotos(searchQuery, pageNumber) {
 async function onLoadMore() {
   page++;
   await fetchAndDisplayPhotos(currentSearchQuery, page);
+  scrollPage();
 }
 
 fetchPhotosButton.addEventListener('click', onLoadMore);
@@ -83,6 +85,7 @@ async function onSearch(event) {
   try {
     page = 1; 
     await fetchAndDisplayPhotos(searchQuery, page);
+   
   } catch (error) {
     console.log(error);
   } finally {
