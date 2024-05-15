@@ -42,7 +42,7 @@ async function fetchAndDisplayPhotos(searchQuery, pageNumber) {
       });
       lightbox.refresh();
  
-      const totalLoadedImages = pageNumber * imagesData.hits.length;
+const totalLoadedImages = pageNumber * 15;
       if (totalLoadedImages >= imagesData.totalHits) {
         hideLoadMoreButton();
         iziToast.info({
