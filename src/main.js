@@ -12,6 +12,7 @@ const loaderEl = document.querySelector('.loader');
 const fetchPhotosButton = document.querySelector('.photo-btn');
 
 let page = 1;
+let limit = 15
 let currentSearchQuery = ''; 
 
 
@@ -32,7 +33,8 @@ async function fetchAndDisplayPhotos(searchQuery, pageNumber) {
         message:
           'Sorry, there are no images matching your search query. Please try again!',
       });
-      hideLoadMoreButton(); 
+      hideLoadMoreButton();
+      fetchPhotosButton.removeEventListener('click', onLoadMore);
     } else {
       imgContainer.innerHTML += createMarkup(imagesData.hits);
    
@@ -42,9 +44,10 @@ async function fetchAndDisplayPhotos(searchQuery, pageNumber) {
       });
       lightbox.refresh();
  
-const totalLoadedImages = pageNumber * 15;
+const totalLoadedImages = pageNumber * limit;
       if (totalLoadedImages >= imagesData.totalHits) {
         hideLoadMoreButton();
+        fetchPhotosButton.removeEventListener('click', onLoadMore);
         iziToast.info({
           message: "We're sorry, but you've reached the end of search results.",
         });
@@ -73,6 +76,7 @@ async function onSearch(event) {
   imgContainer.innerHTML = '';
   if (searchQuery === '') {
     hideLoadMoreButton();
+    fetchPhotosButton.removeEventListener('click', onLoadMore);
     return iziToast.error({
       message:
         'Sorry, there are no images matching your search query. Please try again!',
